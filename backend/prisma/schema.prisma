@@ -1,32 +1,70 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js" }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  name      String
-  email     String  @unique
-  password  String
-  age       Int
-  gender    String
-  height    Float
-  weight    Float
-  entries   Entry[]
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  profile       Profile?
+  goals         Goal?
+  weights       WeightLog[]
+  logs          FoodLog[]
 }
 
-model Entry {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  foodName    String
-  calories    Float
-  protein     Float
-  carbs       Float
-  fat         Float
-  date        DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+model Profile {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id])
+  gender    String  // "male" | "female"
+  age       Int
+  heightCm  Int
+  weightKg  Decimal @db.Decimal(5,2)
+  activity  String  // "sedentary" | "light" | "moderate" | "high" | "athlete"
+}
+
+model Goal {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id])
+  dailyCalories   Int     // hedeften sapma için kolay
+  proteinTargetG  Int?
+  carbTargetG     Int?
+  fatTargetG      Int?
+}
+
+model Food {
+  id           String   @id @default(cuid())
+  name         String
+  brand        String?  // opsiyonel
+  baseAmountG  Int      // 100g gibi referans
+  kcalPer100   Int
+  carbPer100   Decimal  @db.Decimal(6,2)
+  proteinPer100 Decimal @db.Decimal(6,2)
+  fatPer100    Decimal  @db.Decimal(6,2)
+  // İleride: fdcId (USDA), porsiyon tablosu vb.
+}
+
+model FoodLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  foodId    String
+  food      Food     @relation(fields: [foodId], references: [id])
+  date      DateTime // sadece gün de tutulabilir (00:00)
+  mealType  String   // "breakfast" | "lunch" | "dinner" | "snack"
+  amountG   Int      // gram cinsinden
+  kcal      Int      // denormalize (hız için)
+  carbG     Decimal  @db.Decimal(6,2)
+  proteinG  Decimal  @db.Decimal(6,2)
+  fatG      Decimal  @db.Decimal(6,2)
+  createdAt DateTime @default(now())
+}
+
+model WeightLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  date      DateTime @default(now())
+  weightKg  Decimal  @db.Decimal(5,2)
 }
