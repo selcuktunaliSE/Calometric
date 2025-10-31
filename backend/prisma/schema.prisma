@@ -1,51 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-generator client { provider = "prisma-client-js" }
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  passwordHash  String
-  createdAt     DateTime @default(now())
-  profile       Profile?
-  goals         Goal?
-  weights       WeightLog[]
-  logs          FoodLog[]
+  id           String      @id @default(cuid())
+  email        String      @unique
+  passwordHash String
+  createdAt    DateTime    @default(now())
+  profile      Profile?
+  goals        Goal?
+  weights      WeightLog[]
+  logs         FoodLog[]
 }
 
 model Profile {
-  id        String  @id @default(cuid())
-  userId    String  @unique
-  user      User    @relation(fields: [userId], references: [id])
-  gender    String  // "male" | "female"
-  age       Int
-  heightCm  Int
-  weightKg  Decimal @db.Decimal(5,2)
-  activity  String  // "sedentary" | "light" | "moderate" | "high" | "athlete"
+  id       String  @id @default(cuid())
+  userId   String  @unique
+  user     User    @relation(fields: [userId], references: [id])
+  gender   String
+  age      Int
+  heightCm Int
+  weightKg Decimal @db.Decimal(5, 2)
+  activity String
 }
 
 model Goal {
-  id              String  @id @default(cuid())
-  userId          String  @unique
-  user            User    @relation(fields: [userId], references: [id])
-  dailyCalories   Int     // hedeften sapma için kolay
-  proteinTargetG  Int?
-  carbTargetG     Int?
-  fatTargetG      Int?
+  id             String @id @default(cuid())
+  userId         String @unique
+  user           User   @relation(fields: [userId], references: [id])
+  dailyCalories  Int
+  proteinTargetG Int?
+  carbTargetG    Int?
+  fatTargetG     Int?
 }
 
 model Food {
-  id           String   @id @default(cuid())
-  name         String
-  brand        String?  // opsiyonel
-  baseAmountG  Int      // 100g gibi referans
-  kcalPer100   Int
-  carbPer100   Decimal  @db.Decimal(6,2)
-  proteinPer100 Decimal @db.Decimal(6,2)
-  fatPer100    Decimal  @db.Decimal(6,2)
-  // İleride: fdcId (USDA), porsiyon tablosu vb.
+  id            String    @id @default(cuid())
+  name          String
+  brand         String?
+  baseAmountG   Int
+  kcalPer100    Int
+  carbPer100    Decimal   @db.Decimal(6, 2)
+  proteinPer100 Decimal   @db.Decimal(6, 2)
+  fatPer100     Decimal   @db.Decimal(6, 2)
+  FoodLog       FoodLog[]
 }
 
 model FoodLog {
@@ -54,20 +57,20 @@ model FoodLog {
   user      User     @relation(fields: [userId], references: [id])
   foodId    String
   food      Food     @relation(fields: [foodId], references: [id])
-  date      DateTime // sadece gün de tutulabilir (00:00)
-  mealType  String   // "breakfast" | "lunch" | "dinner" | "snack"
-  amountG   Int      // gram cinsinden
-  kcal      Int      // denormalize (hız için)
-  carbG     Decimal  @db.Decimal(6,2)
-  proteinG  Decimal  @db.Decimal(6,2)
-  fatG      Decimal  @db.Decimal(6,2)
+  date      DateTime
+  mealType  String
+  amountG   Int
+  kcal      Int
+  carbG     Decimal  @db.Decimal(6, 2)
+  proteinG  Decimal  @db.Decimal(6, 2)
+  fatG      Decimal  @db.Decimal(6, 2)
   createdAt DateTime @default(now())
 }
 
 model WeightLog {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  date      DateTime @default(now())
-  weightKg  Decimal  @db.Decimal(5,2)
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  date     DateTime @default(now())
+  weightKg Decimal  @db.Decimal(5, 2)
 }
