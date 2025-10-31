@@ -28,70 +28,73 @@ enum MealType {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
-  passwordHash  String
-  createdAt     DateTime   @default(now())
-  profile       Profile?
-  goals         Goal?
-  weights       WeightLog[]
-  logs          FoodLog[]
+  id           String      @id @default(cuid())
+  email        String      @unique
+  passwordHash String
+  createdAt    DateTime    @default(now())
+  profile      Profile?
+  goals        Goal?
+  weights      WeightLog[]
+  logs         FoodLog[]
 }
 
 model Profile {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  gender    Gender
-  age       Int
-  heightCm  Int
-  weightKg  Decimal  @db.Decimal(5, 2)
-  activity  Activity
+  id       String   @id @default(cuid())
+  userId   String   @unique
+  user     User     @relation(fields: [userId], references: [id])
+  gender   Gender
+  age      Int
+  heightCm Int
+  weightKg Decimal  @db.Decimal(5, 2)
+  activity Activity
 }
 
 model Goal {
-  id              String  @id @default(cuid())
-  userId          String  @unique
-  user            User    @relation(fields: [userId], references: [id])
-  dailyCalories   Int
-  proteinTargetG  Int?
-  carbTargetG     Int?
-  fatTargetG      Int?
+  id             String @id @default(cuid())
+  userId         String @unique
+  user           User   @relation(fields: [userId], references: [id])
+  dailyCalories  Int
+  proteinTargetG Int?
+  carbTargetG    Int?
+  fatTargetG     Int?
 }
 
 model Food {
-  id             String   @id @default(cuid())
-  name           String
-  brand          String?
-  baseAmountG    Int      // referans: 100 g
-  kcalPer100     Int
-  carbPer100     Decimal  @db.Decimal(6, 2)
-  proteinPer100  Decimal  @db.Decimal(6, 2)
-  fatPer100      Decimal  @db.Decimal(6, 2)
+  id            String    @id @default(cuid())
+  name          String
+  brand         String?
+  baseAmountG   Int // referans: 100 g
+  kcalPer100    Int
+  carbPer100    Decimal   @db.Decimal(6, 2)
+  proteinPer100 Decimal   @db.Decimal(6, 2)
+  fatPer100     Decimal   @db.Decimal(6, 2)
+  FoodLog       FoodLog[]
+
   @@index([name], map: "idx_food_name")
 }
 
 model FoodLog {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   foodId    String
-  food      Food      @relation(fields: [foodId], references: [id])
-  date      DateTime  // ipucu: gün bazında gruplayacağımız için 00:00:00 olarak set edeceğiz
+  food      Food     @relation(fields: [foodId], references: [id])
+  date      DateTime // ipucu: gün bazında gruplayacağımız için 00:00:00 olarak set edeceğiz
   mealType  MealType
-  amountG   Int       // gram
-  kcal      Int       // denormalize
-  carbG     Decimal   @db.Decimal(6, 2)
-  proteinG  Decimal   @db.Decimal(6, 2)
-  fatG      Decimal   @db.Decimal(6, 2)
-  createdAt DateTime  @default(now())
+  amountG   Int // gram
+  kcal      Int // denormalize
+  carbG     Decimal  @db.Decimal(6, 2)
+  proteinG  Decimal  @db.Decimal(6, 2)
+  fatG      Decimal  @db.Decimal(6, 2)
+  createdAt DateTime @default(now())
+
   @@index([userId, date], map: "idx_log_user_date")
 }
 
 model WeightLog {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  date      DateTime @default(now())
-  weightKg  Decimal  @db.Decimal(5, 2)
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  date     DateTime @default(now())
+  weightKg Decimal  @db.Decimal(5, 2)
 }
