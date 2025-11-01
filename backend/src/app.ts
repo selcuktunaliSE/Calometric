@@ -3,11 +3,11 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import authRoutes from "./routes/auth.routes";
-import profileRoutes from "./routes/profile.routes";
-import foodRoutes from "./routes/food.routes";
-import logRoutes from "./routes/log.routes";
-import statsRoutes from "./routes/stats.routes";
+import authRoutes from "./routes/auth";
+import profileRoutes from "./routes/profile";
+import foodRoutes from "./routes/food";
+import logRoutes from "./routes/log";
+import statsRoutes from "./routes/stats";
 
 const app = express();
 app.use(express.json());
