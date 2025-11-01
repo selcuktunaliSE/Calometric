@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, FlatList, Text, Button, Alert } from "react-native";
-import { api } from "../lib/api";
+import { api } from "../api";
 
 export default function AddFoodScreen() {
   const [q, setQ] = useState("");

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Alert } from "react-native";
 import { useAuth } from "../context/AuthContext";
-import { api } from "../lib/api";
+import { api } from "../api";
 
 export default function LoginScreen() {
   const { login } = useAuth();

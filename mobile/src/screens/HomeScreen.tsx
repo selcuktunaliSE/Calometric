@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, Text, Button } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../lib/api";
+import { api } from "../api";
 import { useNavigation } from "@react-navigation/native";
 
 function todayIsoStart(){ const d=new Date(); d.setHours(0,0,0,0); return d.toISOString(); }

@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { View, Text } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { VictoryBar, VictoryChart, VictoryAxis } from "victory-native";
-import { api } from "../lib/api";
+const { VictoryBar, VictoryChart, VictoryAxis } = require("victory-native");
+import { api } from "../api";
 
 function rangeIso(days=7){ const end=new Date(); end.setHours(0,0,0,0); const start=new Date(end); start.setDate(end.getDate()-days); return {start:start.toISOString(), end:end.toISOString()}; }
 

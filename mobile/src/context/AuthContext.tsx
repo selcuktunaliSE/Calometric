@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { api } from "../lib/api";
-import { getToken, setToken, clearToken } from "../lib/storage";
+import { api } from "../api";
+import { getToken, setToken, clearToken } from "../storage";
 
 type AuthCtx = {
   token: string | null;

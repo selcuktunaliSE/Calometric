@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, Alert } from "react-native";
-import { api } from "../lib/api";
+import { api } from "../api";
 
 export default function ProfileScreen() {
   const [gender, setGender] = useState<"male"|"female">("male");
