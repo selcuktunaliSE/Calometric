@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
+import AppLogo from "../components/AppLogo";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,14 +25,21 @@ export default function Navigation() {
 
   return (
     <NavigationContainer theme={theme}>
-      <Stack.Navigator screenOptions={{ headerTitleStyle:{ color:"#F3F4F6" }, headerTintColor:"#F3F4F6" }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerTitle: () => <AppLogo width={28} height={28} />,
+          headerTitleAlign: "center",
+
+        }}
+      >
         {!token ? (
           <>
-            <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Giriş" }} />
-            <Stack.Screen name="Register" component={RegisterScreen} options={{ title: "Kayıt Ol" }} />
+
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
-          <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Calometric" }} />
+          <Stack.Screen name="Home" component={HomeScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
