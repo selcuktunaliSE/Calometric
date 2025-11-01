@@ -1,31 +1,15 @@
-import React, { useMemo } from "react";
-import { View, Text, Button } from "react-native";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../api";
-import { useNavigation } from "@react-navigation/native";
-
-function todayIsoStart(){ const d=new Date(); d.setHours(0,0,0,0); return d.toISOString(); }
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useAuth } from "../context/AuthContext";
 
 export default function HomeScreen() {
-  const nav = useNavigation<any>();
-  const date = useMemo(todayIsoStart, []);
-  const { data: me } = useQuery({ queryKey: ["me"], queryFn: async () => (await api.get("/profile/me")).data });
-  const { data: sum } = useQuery({ queryKey: ["day", date], queryFn: async () => (await api.get(`/stats/day?date=${date}`)).data });
-
-  const total = sum?.kcal ?? 0;
-  const limit = me?.goals?.dailyCalories ?? 0;
-  const remaining = limit ? Math.max(0, limit - total) : null;
-
+  const { logout } = useAuth();
   return (
-    <View style={{ padding: 16, gap: 12 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700" }}>Bugün</Text>
-      <Text>Kalori: {total} {limit ? `/ ${limit} kcal` : ""}</Text>
-      {remaining !== null && <Text>Kalan: {remaining} kcal</Text>}
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        <Button title="Yemek Ekle" onPress={() => nav.navigate("AddFood")} />
-        <Button title="Profil" onPress={() => nav.navigate("Profile")} />
-        <Button title="Geçmiş" onPress={() => nav.navigate("History")} />
-      </View>
+    <View style={{ flex:1, backgroundColor:"#0A0A0A", alignItems:"center", justifyContent:"center" }}>
+      <Text style={{ color:"#F3F4F6", fontSize:22, fontWeight:"800", marginBottom:16 }}>Giriş başarılı 🎉</Text>
+      <TouchableOpacity onPress={logout} style={{ backgroundColor:"#F87171", padding:12, borderRadius:10 }}>
+        <Text style={{ color:"#0A0A0A", fontWeight:"700" }}>Çıkış yap</Text>
+      </TouchableOpacity>
     </View>
   );
 }

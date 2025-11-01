@@ -1,29 +1,37 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
-import AddFoodScreen from "../screens/AddFoodScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import HistoryScreen from "../screens/HistoryScreen";
 
 const Stack = createNativeStackNavigator();
 
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "#0A0A0A",
+    text: "#F3F4F6",
+    card: "#111827",
+    border: "#1F2937",
+  },
+};
+
 export default function Navigation() {
   const { token } = useAuth();
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
+    <NavigationContainer theme={theme}>
+      <Stack.Navigator screenOptions={{ headerTitleStyle:{ color:"#F3F4F6" }, headerTintColor:"#F3F4F6" }}>
         {!token ? (
-          <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: "Giriş" }} />
-        ) : (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Bugün" }} />
-            <Stack.Screen name="AddFood" component={AddFoodScreen} options={{ title: "Yemek Ekle" }} />
-            <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: "Profil" }} />
-            <Stack.Screen name="History" component={HistoryScreen} options={{ title: "Geçmiş" }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Giriş" }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ title: "Kayıt Ol" }} />
           </>
+        ) : (
+          <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Calometric" }} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
