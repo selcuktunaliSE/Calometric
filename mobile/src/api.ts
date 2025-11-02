@@ -2,7 +2,11 @@ import axios from "axios";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 
-const baseURL = (Constants?.expoConfig?.extra as any)?.apiUrl ?? "http://localhost:5000";
+// Öncelik: EXPO_PUBLIC_API_URL -> app.config.extra.apiUrl -> localhost:5000
+const baseURL =
+  process.env.EXPO_PUBLIC_API_URL ||
+  (Constants?.expoConfig?.extra as any)?.apiUrl ||
+  "http://localhost:5001";
 
 export const api = axios.create({ baseURL });
 

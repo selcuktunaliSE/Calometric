@@ -1,4 +1,3 @@
-// src/types/api.ts
 export type MacroTotals = {
   kcal: number;
   carbG: number;
@@ -13,20 +12,20 @@ export type DaySummary = {
 };
 
 export type WeekSummaryPoint = {
-  date: string; // 'YYYY-MM-DD'
+  date: string;          // 'YYYY-MM-DD'
   kcal: number;
 };
 
 export type ProfileDTO = {
-  gender: 'male' | 'female';
+  gender: "male" | "female";
   age: number;
   heightCm: number;
   weightKg: number;
-  activity: 'sedentary' | 'light' | 'moderate' | 'high' | 'athlete';
+  activity: "sedentary" | "light" | "moderate" | "high" | "athlete";
   bmi: number;
   bmr: number;
   tdee: number;
-  goalKcal: number;
+  goalKcal: number | null;
 };
 
 export type FoodLogItem = {
@@ -38,5 +37,5 @@ export type FoodLogItem = {
   carbG: number;
   proteinG: number;
   fatG: number;
-  mealType: 'breakfast'|'lunch'|'dinner'|'snack';
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
 };

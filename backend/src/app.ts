@@ -8,6 +8,8 @@ import profileRoutes from "./routes/profile";
 import foodRoutes from "./routes/food";
 import logRoutes from "./routes/log";
 import statsRoutes from "./routes/stats";
+import summaryRoutes from "./routes/summary"
+import meRoutes from "./routes/me"
 
 const app = express();
 app.use(express.json());
@@ -22,5 +24,7 @@ app.use("/profile", profileRoutes);
 app.use("/foods", foodRoutes);
 app.use("/logs", logRoutes);
 app.use("/stats", statsRoutes);
+app.use("/summary", summaryRoutes);
+app.use("/me", meRoutes);
 
 export default app;

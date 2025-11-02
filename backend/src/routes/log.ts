@@ -56,6 +56,29 @@ r.post("/add", auth, async (req: any, res) => {
   const exceeded = goal ? (dayTotals._sum.kcal ?? 0) > goal.dailyCalories : false;
 
   res.json({ log, dayTotals: dayTotals._sum, exceeded, limit: goal?.dailyCalories ?? null });
+  r.get("/today", auth, async (req:any, res) => {
+  const d = new Date(); d.setHours(0,0,0,0);
+  const start = d, end = new Date(d); end.setDate(d.getDate()+1);
+
+  const rows = await prisma.foodLog.findMany({
+    where: { userId: req.userId, date: { gte: start, lt: end } },
+    include: { food: true },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const out = rows.map(x => ({
+    id: x.id,
+    foodName: x.food.name,
+    brand: x.food.brand,
+    amountG: x.amountG,
+    kcal: x.kcal,
+    carbG: Number(x.carbG),
+    proteinG: Number(x.proteinG),
+    fatG: Number(x.fatG),
+    mealType: x.mealType
+  }));
+  res.json(out);
+});
 });
 
 export default r;

@@ -6,7 +6,9 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import AppLogo from "../components/AppLogo";
-
+import AddFoodScreen from "../screens/AddFoodScreen";
+import HistoryScreen from "../screens/HistoryScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 const Stack = createNativeStackNavigator();
 
 const theme = {
@@ -32,15 +34,19 @@ export default function Navigation() {
 
         }}
       >
-        {!token ? (
-          <>
-
-            <Stack.Screen name="Login" component={LoginScreen}/>
-            <Stack.Screen name="Register" component={RegisterScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="Home" component={HomeScreen} />
-        )}
+       {!token ? (
+  <>
+    <Stack.Screen name="Login" component={LoginScreen}/>
+    <Stack.Screen name="Register" component={RegisterScreen} />
+  </>
+) : (
+  <>
+    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="AddFood" component={AddFoodScreen} />
+    <Stack.Screen name="History" component={HistoryScreen} />
+    <Stack.Screen name="Profile" component={ProfileScreen} />
+  </>
+)}
       </Stack.Navigator>
     </NavigationContainer>
   );

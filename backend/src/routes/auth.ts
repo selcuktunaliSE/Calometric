@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import { prisma } from "../lib/prisma";
 import { env } from "../env";
+import { signToken } from "../lib/jwt";
 
 const router = Router();
 
@@ -23,8 +24,9 @@ router.post("/register", async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({ data: { email, passwordHash } });
 
-  const token = jwt.sign({ uid: user.id }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN });
-  return res.json({ token });
+  const token = signToken(user.id);
+return res.json({ token });
+
 });
 
 router.post("/login", async (req, res) => {
@@ -38,7 +40,7 @@ router.post("/login", async (req, res) => {
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
-  const token = jwt.sign({ uid: user.id }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN });
+  const token = signToken(user.id);
   return res.json({ token });
 });
 
