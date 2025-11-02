@@ -27,7 +27,7 @@ export default function Navigation() {
     <NavigationContainer theme={theme}>
       <Stack.Navigator
         screenOptions={{
-          headerTitle: () => <AppLogo width={28} height={28} />,
+          headerTitle: () => <AppLogo size={22} />,
           headerTitleAlign: "center",
 
         }}
@@ -35,7 +35,7 @@ export default function Navigation() {
         {!token ? (
           <>
 
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Login" component={LoginScreen}/>
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (

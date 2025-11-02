@@ -22,7 +22,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={{ flex:1, backgroundColor:"#0A0A0A", padding:24, justifyContent:"center" }}>
+    <View style={{ flex:1, backgroundColor:"#0A0A0A", padding:24,marginTop:50 }}>
       <Text style={{ fontSize:26, color:"#F3F4F6", fontWeight:"800", marginBottom:16 }}>Yeni Hesap</Text>
       <Text style={{ color:"#9CA3AF", marginBottom:8 }}>E-posta</Text>
       <TextInput

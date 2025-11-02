@@ -22,7 +22,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={{ flex:1, backgroundColor:"#0A0A0A", padding:24, justifyContent:"center" }}>
+    
+    <View style={{ flex:1, backgroundColor:"#0A0A0A", padding:24,marginTop:60 }}>
       <Text style={{ fontSize:30, color:"#F3F4F6", fontWeight:"800", marginBottom:16 }}>Calometric</Text>
       <Text style={{ color:"#9CA3AF", marginBottom:8 }}>E-posta</Text>
       <TextInput
