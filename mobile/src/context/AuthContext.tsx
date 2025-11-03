@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { api } from "../api";
 import { getToken, setToken, clearToken } from "../storage";
 
@@ -9,13 +9,20 @@ type AuthCtx = {
   logout: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthCtx>({} as any);
-export const useAuth = () => useContext(AuthContext);
+const AuthContext = createContext<AuthCtx | undefined>(undefined);
+
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  return ctx;
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setTok] = useState<string | null>(null);
 
-  useEffect(() => { getToken().then(t => t && setTok(t)); }, []);
+  useEffect(() => {
+    getToken().then((t) => t && setTok(t));
+  }, []);
 
   const login = async (email: string, password: string) => {
     const { data } = await api.post("/auth/login", { email, password });
@@ -29,11 +36,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTok(data.token);
   };
 
-  const logout = async () => { await clearToken(); setTok(null); };
+  const logout = async () => {
+    await clearToken();
+    setTok(null);
+  };
 
-  return (
-    <AuthContext.Provider value={{ token, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
+  // ✅ ÇÖZÜM: value’yu stabilize et
+  const value = useMemo(
+    () => ({ token, login, register, logout }),
+    [token]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
