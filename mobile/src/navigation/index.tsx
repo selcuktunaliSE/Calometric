@@ -1,53 +1,50 @@
+// src/navigation/index.tsx
 import React from "react";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer, NavigatorScreenParams } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useAuth } from "../context/AuthContext";
+import Tabs, { TabsParamList } from "./Tabs"; 
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import HomeScreen from "../screens/HomeScreen";
-import AppLogo from "../components/AppLogo";
-import AddFoodScreen from "../screens/AddFoodScreen";
-import HistoryScreen from "../screens/HistoryScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-const Stack = createNativeStackNavigator();
+import { useAuth } from "../context/AuthContext";
+import { Image, Pressable } from "react-native";
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "#0A0A0A",
-    text: "#F3F4F6",
-    card: "#111827",
-    border: "#1F2937",
-  },
+type RootStackParamList = {
+  App: NavigatorScreenParams<TabsParamList>; 
+  Login: undefined;
+  Register: undefined;
 };
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation() {
   const { token } = useAuth();
 
   return (
-    <NavigationContainer theme={theme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerTitle: () => <AppLogo size={22} />,
-          headerTitleAlign: "center",
-
-        }}
-      >
-       {!token ? (
-  <>
-    <Stack.Screen name="Login" component={LoginScreen}/>
-    <Stack.Screen name="Register" component={RegisterScreen} />
-  </>
-) : (
-  <>
-    <Stack.Screen name="Home" component={HomeScreen} />
-    <Stack.Screen name="AddFood" component={AddFoodScreen} />
-    <Stack.Screen name="History" component={HistoryScreen} />
-    <Stack.Screen name="Profile" component={ProfileScreen} />
-  </>
-)}
-      </Stack.Navigator>
+    <NavigationContainer>
+      {token ? (
+        <Stack.Navigator>
+          <Stack.Screen
+            name="App"
+            component={Tabs}
+            options={({ navigation }) => ({
+              headerTitle: () => (
+                <Pressable onPress={() => navigation.navigate("App", { screen: "HomeTab" })}>
+                  <Image
+                    source={require("../assets/logo.svg")}
+                    style={{ width: 120, height: 28, resizeMode: "contain" }}
+                  />
+                </Pressable>
+              ),
+              headerTitleAlign: "center",
+            })}
+          />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
