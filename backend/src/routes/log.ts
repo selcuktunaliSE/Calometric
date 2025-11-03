@@ -7,7 +7,7 @@ const r = Router();
 
 const AddLogSchema = z.object({
   foodId: z.string(),
-  date: z.string().datetime(),     // ISO, örn 2025-10-31T00:00:00.000Z (günü 00:00 yap)
+  date: z.string().datetime(), 
   mealType: z.enum(["breakfast", "lunch", "dinner", "snack"]),
   amountG: z.number().int().positive(),
 });
@@ -22,6 +22,7 @@ function calcMacros(amountG: number, kcalPer100: number, carbPer100: number, pro
   };
 }
 
+// 🍽️ Yeni log ekleme
 r.post("/add", auth, async (req: any, res) => {
   const p = AddLogSchema.safeParse(req.body);
   if (!p.success) return res.status(400).json({ error: p.error.flatten() });
@@ -29,9 +30,14 @@ r.post("/add", auth, async (req: any, res) => {
   const food = await prisma.food.findUnique({ where: { id: p.data.foodId } });
   if (!food) return res.status(404).json({ error: "food_not_found" });
 
-  const macros = calcMacros(p.data.amountG, food.kcalPer100, Number(food.carbPer100), Number(food.proteinPer100), Number(food.fatPer100));
+  const macros = calcMacros(
+    p.data.amountG,
+    food.kcalPer100,
+    Number(food.carbPer100),
+    Number(food.proteinPer100),
+    Number(food.fatPer100)
+  );
 
-  // logu yaz
   const log = await prisma.foodLog.create({
     data: {
       userId: req.userId,
@@ -43,9 +49,9 @@ r.post("/add", auth, async (req: any, res) => {
     },
   });
 
-  // günlük toplam ve uyarı
   const start = new Date(p.data.date);
-  const end = new Date(start); end.setDate(start.getDate() + 1);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 1);
 
   const dayTotals = await prisma.foodLog.aggregate({
     where: { userId: req.userId, date: { gte: start, lt: end } },
@@ -55,18 +61,29 @@ r.post("/add", auth, async (req: any, res) => {
   const goal = await prisma.goal.findUnique({ where: { userId: req.userId } });
   const exceeded = goal ? (dayTotals._sum.kcal ?? 0) > goal.dailyCalories : false;
 
-  res.json({ log, dayTotals: dayTotals._sum, exceeded, limit: goal?.dailyCalories ?? null });
-  r.get("/today", auth, async (req:any, res) => {
-  const d = new Date(); d.setHours(0,0,0,0);
-  const start = d, end = new Date(d); end.setDate(d.getDate()+1);
+  res.json({
+    log,
+    dayTotals: dayTotals._sum,
+    exceeded,
+    limit: goal?.dailyCalories ?? null,
+  });
+});
+
+// 📅 Bugünkü logları getir
+r.get("/today", auth, async (req: any, res) => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  const start = d;
+  const end = new Date(d);
+  end.setDate(d.getDate() + 1);
 
   const rows = await prisma.foodLog.findMany({
     where: { userId: req.userId, date: { gte: start, lt: end } },
     include: { food: true },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 
-  const out = rows.map(x => ({
+  const out = rows.map((x) => ({
     id: x.id,
     foodName: x.food.name,
     brand: x.food.brand,
@@ -75,10 +92,10 @@ r.post("/add", auth, async (req: any, res) => {
     carbG: Number(x.carbG),
     proteinG: Number(x.proteinG),
     fatG: Number(x.fatG),
-    mealType: x.mealType
+    mealType: x.mealType,
   }));
+
   res.json(out);
-});
 });
 
 export default r;

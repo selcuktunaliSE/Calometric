@@ -6,38 +6,41 @@ import { auth } from "../lib/jwt";
 const r = Router();
 
 const RangeSchema = z.object({
-  start: z.string().datetime(), // günün 00:00'ı
-  end: z.string().datetime(),   // ertesi gün 00:00 (exclusive) ya da ileri tarih
+  start: z.string().datetime(),
+  end: z.string().datetime(),
 });
 
 r.get("/day", auth, async (req: any, res) => {
-  const dateStr = String(req.query.date); // tek gün
+  const dateStr = String(req.query.date);
   const start = new Date(dateStr);
-  const end = new Date(start); end.setDate(start.getDate() + 1);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 1);
 
   const sum = await prisma.foodLog.aggregate({
     where: { userId: req.userId, date: { gte: start, lt: end } },
     _sum: { kcal: true, carbG: true, proteinG: true, fatG: true },
   });
+
   res.json(sum._sum);
 });
 
+// 🔹 GET /stats/range?start=2025-10-01T00:00:00.000Z&end=2025-10-08T00:00:00.000Z
 r.get("/range", auth, async (req: any, res) => {
-  const p = RangeSchema.safeParse({ start: req.query.start, end: req.query.end });
-  if (!p.success) return res.status(400).json({ error: p.error.flatten() });
+  const parsed = RangeSchema.safeParse(req.query);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+
+  const { start, end } = parsed.data;
 
   const logs = await prisma.foodLog.findMany({
-    where: { userId: req.userId, date: { gte: new Date(p.data.start), lt: new Date(p.data.end) } },
+    where: { userId: req.userId, date: { gte: new Date(start), lt: new Date(end) } },
     select: { date: true, kcal: true, carbG: true, proteinG: true, fatG: true },
     orderBy: { date: "asc" },
   });
 
-  // Gün bazında grupla (JS tarafında)
-  const dayKey = (d: Date) => d.toISOString().slice(0, 10);
-  const byDay = new Map<string, { kcal: number, carbG: number, proteinG: number, fatG: number }>();
-
+  const byDay = new Map<string, { kcal: number; carbG: number; proteinG: number; fatG: number }>();
   for (const x of logs) {
-    const k = dayKey(x.date);
+    const k = x.date.toISOString().slice(0, 10);
     const cur = byDay.get(k) ?? { kcal: 0, carbG: 0, proteinG: 0, fatG: 0 };
     byDay.set(k, {
       kcal: cur.kcal + x.kcal,
@@ -47,7 +50,13 @@ r.get("/range", auth, async (req: any, res) => {
     });
   }
 
-  res.json(Object.fromEntries(byDay));
+  // Daha kolay tüketim için array döndür
+  const out = Array.from(byDay.entries()).map(([date, values]) => ({
+    date,
+    ...values,
+  }));
+
+  res.json(out);
 });
 
 export default r;
