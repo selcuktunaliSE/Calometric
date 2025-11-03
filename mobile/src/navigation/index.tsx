@@ -1,43 +1,34 @@
-// src/navigation/index.tsx
 import React from "react";
-import { NavigationContainer, NavigatorScreenParams } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Tabs, { TabsParamList } from "./Tabs"; 
+import Tabs from "./Tabs";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import { useAuth } from "../context/AuthContext";
-import { Image, Pressable } from "react-native";
+import { DefaultTheme, DarkTheme } from "@react-navigation/native";
 
-type RootStackParamList = {
-  App: NavigatorScreenParams<TabsParamList>; 
-  Login: undefined;
-  Register: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
-  const auth = useAuth();
-  const token = auth.token;
+  const { token } = useAuth();
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={{
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: "#070b18",  // senin app arka plan rengin
+    card: "#0b1020",        // header veya card arka planı
+    text: "#ffffff",        // metin rengi
+    border: "#222",         // kenarlıklar
+  },
+}}>
       {token ? (
         <Stack.Navigator>
           <Stack.Screen
             name="App"
             component={Tabs}
-            options={({ navigation }) => ({
-              headerTitle: () => (
-                <Pressable onPress={() => navigation.navigate("App", { screen: "HomeTab" })}>
-                  <Image
-                    source={require("../assets/logo.svg")}
-                    style={{ width: 120, height: 28, resizeMode: "contain" }}
-                  />
-                </Pressable>
-              ),
-              headerTitleAlign: "center",
-            })}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       ) : (

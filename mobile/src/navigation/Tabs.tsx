@@ -35,7 +35,7 @@ export default function Tabs() {
         },
       })}
     >
-      <Tab.Screen name="HomeTab" component={HomeScreen} options={{ title: "Calometric" }} />
+      <Tab.Screen name="HomeTab" component={HomeScreen} options={{ title: "Anasayfa" }} />
       <Tab.Screen name="AddTab" component={AddFoodScreen} options={{ title: "Ekle" }} />
       <Tab.Screen name="HistoryTab" component={HistoryScreen} options={{ title: "Kayıtlar" }} />
       <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{ title: "Profil" }} />
