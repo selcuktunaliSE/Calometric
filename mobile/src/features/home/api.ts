@@ -17,6 +17,7 @@ export const getWeekSummary = async (): Promise<WeekSummaryPoint[]> => {
 };
 
 export const getProfile = async (): Promise<ProfileDTO> => {
-  const { data } = await api.get('/me/profile');     // uyumlu
+  const { data } = await api.get('/me'); // ✅ doğru endpoint
   return data;
 };
+
