@@ -8,7 +8,7 @@ export default function AddFoodScreen() {
   const [grams, setGrams] = useState("100");
 
   const search = async () => {
-    const { data } = await api.get(`/foods/search?q=${encodeURIComponent(q)}`);
+    const { data } = await api.get(`/food/search?q=${encodeURIComponent(q)}`);
     setFoods(data);
   };
   const add = async (foodId: string) => {
