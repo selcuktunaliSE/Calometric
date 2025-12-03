@@ -14,7 +14,7 @@ function RootNavigator() {
   const { user, loading } = useContext(AuthContext);
 
   if (loading) {
-    return null; // istersen SplashScreen koy
+    return null;
   }
 
   return (
